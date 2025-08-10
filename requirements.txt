@@ -1,0 +1,11 @@
+crewai
+crewai_tools
+python-dotenv
+streamlit
+requests
+beautifulsoup4
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib
+sentence-transformers
+PyMuPDF
