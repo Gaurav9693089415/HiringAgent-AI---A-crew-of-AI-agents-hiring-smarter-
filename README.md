@@ -175,7 +175,7 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 
 ##  Author
 
-**Gaurav**
+**Gaurav Kumar (Msc, IIIT Lucknow)**
 
 
 ```
