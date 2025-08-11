@@ -1,6 +1,6 @@
 
 
-```markdown
+
 # HiringAgent-AI — A Crew of AI Agents Hiring Smarter 🤖
 
 An **agentic AI-powered resume screening system** that automates the hiring pipeline using a crew of specialized AI agents.  
