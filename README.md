@@ -176,7 +176,7 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 ##  Author
 
 **Gaurav**
-Building intelligent tools to make hiring more efficient, unbiased, and automated.
+
 
 ```
 
