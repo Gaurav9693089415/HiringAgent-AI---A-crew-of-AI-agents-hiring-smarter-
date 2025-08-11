@@ -175,7 +175,7 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 
 ##  Author
 
-**Gaurav Kumar (Msc, IIIT Lucknow)**
+**Gaurav Kumar (Msc in  Artificial Intelligence and Machine Learning , IIIT Lucknow)**
 
 
 ```
