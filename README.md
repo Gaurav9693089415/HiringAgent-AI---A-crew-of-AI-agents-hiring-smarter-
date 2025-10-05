@@ -7,6 +7,11 @@ An **agentic AI-powered resume screening system** that automates the hiring pipe
 From scraping job postings to embedding-based filtering, LLM analysis, and interview scheduling, **HiringAgent-AI** makes recruitment faster, smarter, and more objective.
 
 ---
+
+## 🌐 Live Demo
+Check out the deployed Streamlit app here:  
+[https://eaeir9z9bpbtizknisncmu.streamlit.app/](https://eaeir9z9bpbtizknisncmu.streamlit.app/)
+
 ## Demo Video 🎥
 
 [![HiringAgent Demo](https://img.youtube.com/vi/PLACEHOLDER/0.jpg)](https://drive.google.com/file/d/1nwHcT3z1JjL8ifrGYDmcOZXd1JgbM6Ex/view?usp=sharing)  
