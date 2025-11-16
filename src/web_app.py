@@ -6,7 +6,13 @@ import sys
 import datetime
 import json
 import hashlib
-from werkzeug.utils import secure_filename
+import re  # Added for secure_filename replacement
+
+# --- Replacement for deprecated Werkzeug secure_filename ---
+def secure_filename(filename):
+    filename = os.path.basename(filename)
+    filename = re.sub(r'[^A-Za-z0-9._-]', '_', filename)
+    return filename
 
 # Ensure absolute imports work
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -95,26 +101,20 @@ if st.button("Check Resumes"):
                             llm_score = llm_data.get("score", 0)
                             llm_summary = llm_data.get("summary", "Summary not found.")
                     elif task_output.agent == "Embedding Matcher":
-                        # The embedding matcher should return the parsed resume data including email
                         if isinstance(task_output.raw, dict):
                             candidate_email = task_output.raw.get("email", "Email not found")
                         elif isinstance(task_output.raw, str):
-                            # If it's a string, try to parse it as JSON
                             try:
                                 parsed_data = json.loads(task_output.raw)
                                 candidate_email = parsed_data.get("email", "Email not found")
                             except json.JSONDecodeError:
-                                # If it's not JSON, it might be just the score, so we need to get email differently
-                                # We'll need to extract email from the raw crew output or task context
                                 pass
 
-                # If we still don't have email, try to extract it from the crew output directly
+                # Secondary email extraction
                 if candidate_email == "Email not found":
                     try:
-                        # Look for email in any task output that might contain it
                         for task_output in crew_output.tasks_output:
                             if hasattr(task_output, 'raw') and isinstance(task_output.raw, str):
-                                import re
                                 email_match = re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', task_output.raw)
                                 if email_match:
                                     candidate_email = email_match.group(0)
@@ -152,7 +152,7 @@ if st.session_state.processed_resumes:
         st.markdown(f"**Resume:** {filename}")
         st.write(f"**Score:** {data['score']}/100")
         st.write(f"**Decision:** {data['decision']}")
-        st.write(f"**Email:** {data['email']}")  # Show extracted email
+        st.write(f"**Email:** {data['email']}")
         with st.expander("Show LLM Summary"):
             st.write(data['summary'])
         st.markdown("---")
@@ -173,17 +173,17 @@ if st.session_state.processed_resumes:
             email_to_use = st.session_state.processed_resumes.get(selected_candidate, {}).get("email", "")
             
             if email_to_use and email_to_use != "Email not found":
-                st.success(f"✅ Email automatically extracted: **{email_to_use}**")
+                st.success(f" Email automatically extracted: **{email_to_use}**")
                 candidate_email = email_to_use
                 
-                # Show the email but make it editable in case it's wrong
+                # Show editable email
                 candidate_email = st.text_input(
                     "Candidate's Email Address:",
                     value=email_to_use,
                     help="Email was automatically extracted from resume. You can edit if needed."
                 )
             else:
-                st.warning("⚠️ Email could not be extracted from resume. Please enter manually.")
+                st.warning(" Email could not be extracted from resume. Please enter manually.")
                 candidate_email = st.text_input(
                     "Candidate's Email Address (Required):",
                     key="candidate_email_input",
@@ -214,13 +214,11 @@ if st.session_state.processed_resumes:
                         for task_output in crew_output_scheduling.tasks_output:
                             if task_output.agent == "Interview Scheduler":
                                 scheduling_result = task_output.raw.strip()
-                                # Extract meeting link from the response
-                                import re
+                                # Extract meeting link
                                 link_match = re.search(r'https://meet\.google\.com/[a-zA-Z0-9-]+', scheduling_result)
                                 if link_match:
                                     meeting_link = link_match.group(0)
                                 
-                                # Extract event ID if present
                                 event_match = re.search(r'Event ID: ([a-zA-Z0-9_-]+)', scheduling_result)
                                 if event_match:
                                     event_id = event_match.group(1)
@@ -231,10 +229,10 @@ if st.session_state.processed_resumes:
                             st.success(f" Meeting Link: [Join Meeting]({meeting_link})")
                             if event_id:
                                 st.info(f" Calendar Event ID: {event_id}")
-                        elif "scheduled successfully" in scheduling_result.lower():
+                        elif scheduling_result and "scheduled successfully" in scheduling_result.lower():
                             st.success(f" Interview scheduled successfully!")
                             st.success(f" Invitation sent to: {candidate_email}")
-                            st.warning(" Meeting link not found in response, but event was created. Please check your calendar.")
+                            st.warning(" Meeting link not found, but event was created.")
                             st.info(f"Scheduler Response: {scheduling_result}")
                         else:
                             st.error(f" Failed to schedule interview: {scheduling_result}")
